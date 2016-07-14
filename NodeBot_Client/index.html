@@ -1,0 +1,78 @@
+<!doctype html>
+<!--=======================================================
+//
+//     FILE : index.html
+//
+//  PROJECT : Sample NodeBot Client Application
+//
+//  PURPOSE : This is a sample Client (user interface) to
+//            controlling a NodeBot.  It connects to the
+//            NodeBot Server by web socket. The server
+//            runs on a PC local to your NodeBot hardware.
+//
+//   AUTHOR : Bill Daniels
+//            Copyright 2014-2016, D+S Tech Labs, Inc.
+//            All Rights Reserved
+//
+//======================================================-->
+
+<html lang="en-us">
+
+  <!-- Head -->
+  <head>
+
+    <!-- These three meta tags MUST come first in the <head> tag. -->
+    <!-- All other <head> content must come AFTER these tags.     -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Metatags -->
+    <meta charset="utf-8" />
+    <meta name="keywords"    content="robot,arm,control,robotic,motion,movement,controller,dc,stepper,motor,gripper" />
+    <meta name="description" content="A Sample NodeBot User Interface" />
+    <meta name="author"      content="D+S Tech Labs, Inc." />
+    <meta name="copyright"   content="&copy; 2014-2016, D+S Tech Labs, Inc." />
+    <meta name="robot"       content="noindex, nofollow" />
+
+    <title>Welcome to my NodeBot</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="app.css" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+
+    <!-- Socket.io -->
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+    <!-- This App -->
+    <script src="app.js"></script>
+
+  </head>
+
+  <!-- Body -->
+  <body>
+
+    <h1>Hello World!</h1>
+    This is the User Interface to my NodeBot!<br>
+    You can see the NodeBot Server connection status and socket messages to the right.<br>
+    <br>
+
+    <!-- Send message to NodeBot Server or MCU board -->
+    Send message to NodeBot Server or MCU board:<br>
+    <input id="userCommandBox" type="text" />
+    <button onclick="SendUserCommand()"> Send </button><br>
+    <br>
+
+    <!-- Socket Message Monitor -->
+    <div id="socketMonitor">
+      <div id="connectionStatus">
+        Not connected to NodeBot Server
+      </div>
+      <textarea id="messageList" rows="30" readonly></textarea>
+    </div>
+
+  </body>
+
+</html>

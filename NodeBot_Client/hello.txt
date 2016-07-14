@@ -1,0 +1,4 @@
+Hello!
+This is a sample client file.
+This file could have config info for your robot, such as motor limits.
+This is the last line.
