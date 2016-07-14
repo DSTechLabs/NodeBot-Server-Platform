@@ -1,0 +1,20 @@
+[
+  {
+    "deviceName"   : "Arduino Board 1",
+    "portName"     : "COM5",
+    "portSettings" : "57600|8|1|none",
+    "serialPort"   : "undefined"
+  },
+  {
+    "deviceName"   : "Arduino Board 2",
+    "portName"     : "COM6",
+    "portSettings" : "57600|8|1|none",
+    "serialPort"   : "undefined"
+  },
+  {
+    "deviceName"   : "Arduino Board 3",
+    "portName"     : "COM7",
+    "portSettings" : "57600|8|1|none",
+    "serialPort"   : "undefined"
+  }
+]
