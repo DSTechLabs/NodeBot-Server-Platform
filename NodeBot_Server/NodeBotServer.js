@@ -99,9 +99,7 @@
 //
 //                id|message                  - Firmware <message> from device <id>
 //                FileList|fname1|fname2|...  - List of files from GetFileList
-//                File|contents               - Contents of file from GetFile
-//                                              (separate lines in <contents> are
-//                                               delimited with '|' char)
+//                File|path|contents          - Contents of file from GetFile
 //
 //            █ Architecture:
 //
@@ -441,7 +439,7 @@ function ProcessClientMessage (clientMessage)
           else
           {
             var fileData = contents.toString();
-            PostMessage ('File|' + fileData, true);
+            PostMessage ('File|' + fields[1] + '|' + fileData, true);
           }
         });
       }
