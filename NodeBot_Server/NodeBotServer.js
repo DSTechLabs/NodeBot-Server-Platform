@@ -90,15 +90,14 @@
 //              Other messages from the client app to the NodeBot Server:
 //
 //                Broadcast|message      - Broadcast the firmware <message> to all devices
-//                GetFileList|path       - Get a list of files in NodeBot_Client\<path>
-//                GetFile|path           - Get the contents of the file at NodeBot_Client\<path>
-//                PutFile|path|contents  - Put (write) <contents> to NodeBot_Client\<path>
-//                                         (use '|' to delimit lines in <contents>)
+//                GetFileList|path|ext   - Get a list of files in <path> with extension <ext>
+//                GetFile|path           - Get the contents of the file at <path>
+//                PutFile|path|contents  - Put (write) <contents> to <path>
 //
 //              Messages from the NodeBot Server to the client app:
 //
 //                id|message                  - Firmware <message> from device <id>
-//                FileList|fname1|fname2|...  - List of files from GetFileList
+//                FileList|fname1,fname2,...  - List of files from GetFileList (separated by commas)
 //                File|path|contents          - Contents of file from GetFile
 //
 //            █ Architecture:
@@ -155,16 +154,16 @@
 
 //--- Globals -----------------------------------------------------------------
 
-var   MCUPorts         = [];
-var   CurrentPortIndex = 0;
-var   FileSystem       = require ("fs");
-var   WebSocket        = undefined;
+var  MCUPorts         = [];
+var  CurrentPortIndex = 0;
+var  FileSystem       = require ("fs");
+var  WebSocket        = undefined;
 
 //--- Startup -----------------------------------------------------------------
 
 console.log ();
 console.log ('▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀');
-console.log ('      N O D E B O T   S E R V E R  (2016.07.14)');
+console.log ('      N O D E B O T   S E R V E R  (2016.07.15)');
 console.log ();
 console.log ('  Author: Bill Daniels');
 console.log ('          Copyright 2014-2016, D+S Tech Labs, Inc.');
@@ -396,33 +395,41 @@ function ProcessClientMessage (clientMessage)
       }
 
       //-----------------------------------------
-      // GetFileList|path
+      // GetFileList|path|ext
       // (relative to NodeBot_Client folder)
       //-----------------------------------------
       else if (command == 'GetFileList')
       {
-        // Get a list of files under NodeBot_Client\path
-        FileSystem.readdir ('..\\NodeBot_Client\\' + fields[1], function (error, files)
+        if (fields.length < 3)
+          PostMessage ('Missing extension parameter.', false);
+        else
         {
-          if (error)
-            PostMessage ('Unable to get file list: ' + error.message, false);
-          else
+          // Get a list of files under NodeBot_Client\path with extension ext
+          // If ext is '*' then all files are returned
+          FileSystem.readdir ('..\\NodeBot_Client\\' + fields[1], function (error, files)
           {
-            var fileListString = 'FileList|';
-
-            // Send array of filenames as a '|' delimited string
-            files.forEach (function (name)
+            if (error)
+              PostMessage ('Unable to get file list: ' + error.message, false);
+            else
             {
-              fileListString += name + '|';
-            });
+              var ext = fields[2];
+              var fileListString = 'FileList|';
 
-            // Remove last delimiter if any
-            if (fileListString.endsWith ('|'))
-              fileListString = fileListString.slice (0, -1);
+              // Send array of filenames as a comma delimited string
+              files.forEach (function (name)
+              {
+                if (ext == '*' || name.endsWith (ext))
+                  fileListString += name + ',';
+              });
 
-            PostMessage (fileListString, true);
-          }
-        });
+              // Remove last comma if any
+              if (fileListString.endsWith (','))
+                fileListString = fileListString.slice (0, -1);
+
+              PostMessage (fileListString, true);
+            }
+          });
+        }
       }
 
       //-----------------------------------------
@@ -431,16 +438,13 @@ function ProcessClientMessage (clientMessage)
       //-----------------------------------------
       else if (command == 'GetFile')
       {
-        // Get contents of file at NodeBot_Client\path
-        FileSystem.readFile ('..\\NodeBot_Client\\' + fields[1], function (error, contents)
+        // Get fields[1] of file at NodeBot_Client\path
+        FileSystem.readFile ('..\\NodeBot_Client\\' + fields[1], function (error, fileData)
         {
           if (error)
             PostMessage ('Error reading file: ' + error.message, true);
           else
-          {
-            var fileData = contents.toString();
-            PostMessage ('File|' + fields[1] + '|' + fileData, true);
-          }
+            PostMessage ('File|' + fields[1] + '|' + fileData.toString(), true);
         });
       }
 
